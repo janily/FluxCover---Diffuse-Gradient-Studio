@@ -6,6 +6,8 @@ interface ControlPanelProps {
   config: CoverConfig;
   setConfig: React.Dispatch<React.SetStateAction<CoverConfig>>;
   onDownload: () => void;
+  lang: 'en' | 'zh';
+  setLang: (lang: 'en' | 'zh') => void;
 }
 
 const fontOptions = [
@@ -18,15 +20,60 @@ const fontOptions = [
   { label: 'Cinzel (Cinematic)', value: 'Cinzel' },
 ];
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownload }) => {
+const translations = {
+  en: {
+    title: "FLUX STUDIO",
+    subtitle: "Diffuse Gradient Tool",
+    conceptGenerator: "Concept Generator",
+    conceptDesc: "Enter a theme to generate a matching palette and typography.",
+    placeholder: "e.g. 'Brutalist Architecture'",
+    generate: "Generate",
+    typography: "Typography",
+    fontFamily: "Font Family",
+    titleContent: "Title Content",
+    subtitleContent: "Subtitle Content",
+    parameters: "Parameters",
+    speed: "Fluid Velocity",
+    blur: "Blur Radius",
+    grain: "Noise Intensity",
+    scale: "Pattern Scale",
+    colors: "Color Palette",
+    export: "Export Image",
+    processing: "Processing..."
+  },
+  zh: {
+    title: "FLUX 工作室",
+    subtitle: "弥散渐变设计工具",
+    conceptGenerator: "灵感生成器",
+    conceptDesc: "输入主题以生成匹配的配色方案和排版风格。",
+    placeholder: "例如：'赛博朋克' 或 '江南烟雨'",
+    generate: "生成",
+    typography: "排版设置",
+    fontFamily: "字体系列",
+    titleContent: "标题内容",
+    subtitleContent: "副标题内容",
+    parameters: "参数调整",
+    speed: "流动速度",
+    blur: "模糊半径",
+    grain: "噪点强度",
+    scale: "图案缩放",
+    colors: "配色方案",
+    export: "导出图片",
+    processing: "处理中..."
+  }
+};
+
+const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownload, lang, setLang }) => {
   const [mood, setMood] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  
+  const t = translations[lang];
 
   const handleGenerate = async () => {
     if (!mood.trim()) return;
     setIsGenerating(true);
-    const result = await generateCreativeContent(mood);
+    const result = await generateCreativeContent(mood, lang);
     setConfig(prev => ({
       ...prev,
       title: result.title,
@@ -54,20 +101,28 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
       <div className="p-6 border-b border-[#222] flex justify-between items-center">
         <div>
             <h1 className="text-lg font-semibold text-white tracking-tight">
-            FLUX STUDIO
+            {t.title}
             </h1>
-            <p className="text-[10px] uppercase tracking-wider text-neutral-500 mt-0.5">Diffuse Gradient Tool</p>
+            <p className="text-[10px] uppercase tracking-wider text-neutral-500 mt-0.5">{t.subtitle}</p>
         </div>
-        <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+        <div className="flex items-center gap-3">
+            <button 
+                onClick={() => setLang(lang === 'en' ? 'zh' : 'en')}
+                className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 hover:text-white transition-colors border border-[#333] px-2 py-1 rounded-sm"
+            >
+                {lang === 'en' ? 'CN' : 'EN'}
+            </button>
+            <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
         {/* Generator Section */}
         <section className="space-y-3">
           <div>
-            <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 block mb-2">Concept Generator</label>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 block mb-2">{t.conceptGenerator}</label>
             <p className="text-xs text-neutral-500 leading-relaxed mb-3">
-              Enter a theme to generate a matching palette and typography.
+              {t.conceptDesc}
             </p>
           </div>
           <div className="flex gap-0 shadow-sm">
@@ -75,7 +130,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
               type="text"
               value={mood}
               onChange={(e) => setMood(e.target.value)}
-              placeholder="e.g. 'Brutalist Architecture'"
+              placeholder={t.placeholder}
               className="flex-1 bg-[#1A1A1A] border border-[#333] border-r-0 rounded-l-sm px-3 py-2 focus:outline-none focus:border-white focus:bg-[#222] text-white placeholder-neutral-600 transition-colors text-xs"
             />
             <button
@@ -86,7 +141,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
               {isGenerating ? (
                 <span className="animate-spin block w-3 h-3 border-2 border-black border-t-transparent rounded-full"></span>
               ) : (
-                <span>Generate</span>
+                <span>{t.generate}</span>
               )}
             </button>
           </div>
@@ -94,10 +149,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
         {/* Text Controls */}
         <section className="space-y-5">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">Typography</label>
+          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">{t.typography}</label>
           <div className="space-y-4">
             <div>
-                <label className="text-xs text-neutral-400 mb-1.5 block">Font Family</label>
+                <label className="text-xs text-neutral-400 mb-1.5 block">{t.fontFamily}</label>
                 <select 
                     value={config.fontFamily}
                     onChange={(e) => setConfig({...config, fontFamily: e.target.value})}
@@ -112,7 +167,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
                 </select>
             </div>
             <div>
-                <label className="text-xs text-neutral-400 mb-1.5 block">Title Content</label>
+                <label className="text-xs text-neutral-400 mb-1.5 block">{t.titleContent}</label>
                 <input
                     type="text"
                     value={config.title}
@@ -121,7 +176,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
                 />
             </div>
             <div>
-                <label className="text-xs text-neutral-400 mb-1.5 block">Subtitle Content</label>
+                <label className="text-xs text-neutral-400 mb-1.5 block">{t.subtitleContent}</label>
                 <textarea
                     rows={2}
                     value={config.subtitle}
@@ -134,11 +189,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
         {/* Visual Sliders */}
         <section className="space-y-5">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">Parameters</label>
+          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">{t.parameters}</label>
           
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-neutral-400">
-                <span>Fluid Velocity</span>
+                <span>{t.speed}</span>
                 <span className="font-mono text-[10px] text-neutral-500">{(config.speed).toFixed(1)}</span>
             </div>
             <input
@@ -154,7 +209,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-neutral-400">
-                <span>Blur Radius</span>
+                <span>{t.blur}</span>
                 <span className="font-mono text-[10px] text-neutral-500">{config.blur}PX</span>
             </div>
             <input
@@ -170,7 +225,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-neutral-400">
-                <span>Noise Intensity</span>
+                <span>{t.grain}</span>
                 <span className="font-mono text-[10px] text-neutral-500">{config.grain.toFixed(2)}</span>
             </div>
             <input
@@ -186,7 +241,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
            <div className="space-y-2">
             <div className="flex justify-between text-xs text-neutral-400">
-                <span>Pattern Scale</span>
+                <span>{t.scale}</span>
                 <span className="font-mono text-[10px] text-neutral-500">{config.scale.toFixed(1)}</span>
             </div>
             <input
@@ -203,7 +258,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
 
         {/* Colors */}
         <section className="space-y-4">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">Color Palette</label>
+          <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 border-b border-[#222] pb-2 block">{t.colors}</label>
           <div className="grid grid-cols-5 gap-2">
             {config.colors.map((color, idx) => (
               <div key={idx} className="relative aspect-square group rounded-sm overflow-hidden border border-[#333] hover:border-white transition-colors">
@@ -229,7 +284,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ config, setConfig, onDownlo
             disabled={isDownloading}
             className="w-full bg-white hover:bg-neutral-200 text-black text-xs font-bold py-3.5 px-4 rounded-sm border border-transparent transition-all flex items-center justify-center gap-2 disabled:opacity-50 uppercase tracking-widest"
         >
-            {isDownloading ? 'Processing...' : 'Export Image'}
+            {isDownloading ? t.processing : t.export}
         </button>
       </div>
     </div>

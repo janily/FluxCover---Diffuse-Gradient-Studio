@@ -27,13 +27,18 @@ const responseSchema: Schema = {
   required: ["title", "subtitle", "colors"],
 };
 
-export const generateCreativeContent = async (mood: string): Promise<GeneratedContent> => {
+export const generateCreativeContent = async (mood: string, lang: 'en' | 'zh'): Promise<GeneratedContent> => {
   try {
     const modelId = "gemini-2.5-flash"; 
     
+    const langInstruction = lang === 'zh' 
+      ? "Generate the title and subtitle in Simplified Chinese (zh-CN)." 
+      : "Generate the title and subtitle in English.";
+
     const response = await ai.models.generateContent({
       model: modelId,
       contents: `Generate a creative design concept for a "Diffuse Gradient" graphic poster based on this mood/theme: "${mood}". 
+      ${langInstruction}
       Return a JSON object with a catchy title, a subtitle, and a palette of 5 distinct, vibrant colors that blend well together.`,
       config: {
         responseMimeType: "application/json",
@@ -51,8 +56,8 @@ export const generateCreativeContent = async (mood: string): Promise<GeneratedCo
     console.error("Gemini generation failed:", error);
     // Fallback if API fails
     return {
-      title: "Error Generating",
-      subtitle: "Please check your API key or try again.",
+      title: lang === 'zh' ? "生成错误" : "Error Generating",
+      subtitle: lang === 'zh' ? "请检查API Key或重试。" : "Please check your API key or try again.",
       colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#00ffff"]
     };
   }

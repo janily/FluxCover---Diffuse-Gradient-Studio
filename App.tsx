@@ -5,6 +5,8 @@ import ControlPanel from './components/ControlPanel';
 import { CoverConfig } from './types';
 
 const App: React.FC = () => {
+  const [lang, setLang] = useState<'en' | 'zh'>('en');
+  
   const [config, setConfig] = useState<CoverConfig>({
     title: 'The Art of\nDiffusion.',
     subtitle: 'Exploring the boundaries between \ncolor, light, and code.',
@@ -109,7 +111,10 @@ const App: React.FC = () => {
             {/* Text Overlay Layer */}
             <div 
                 className="absolute inset-0 z-20 p-12 flex flex-col justify-between pointer-events-none mix-blend-difference text-white transition-all duration-300"
-                style={{ fontFamily: config.fontFamily }}
+                style={{ 
+                  // Use user selected font, but always fallback to Noto Sans SC for Chinese support
+                  fontFamily: `"${config.fontFamily}", "Noto Sans SC", sans-serif` 
+                }}
             >
                 <div className="space-y-4">
                      <h1 className="text-6xl font-extrabold tracking-tighter leading-none whitespace-pre-wrap">
@@ -122,7 +127,7 @@ const App: React.FC = () => {
                         {config.subtitle}
                     </p>
                     <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-widest opacity-60 font-sans">
-                        <span>Flux Generation</span>
+                        <span>{lang === 'zh' ? 'Flux 视觉生成' : 'Flux Generation'}</span>
                         <span>•</span>
                         <span>2024</span>
                     </div>
@@ -144,6 +149,8 @@ const App: React.FC = () => {
         config={config} 
         setConfig={setConfig} 
         onDownload={handleDownload}
+        lang={lang}
+        setLang={setLang}
       />
     </div>
   );
