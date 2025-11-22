@@ -15,8 +15,8 @@ export const generateCreativeContent = async (mood: string, lang: 'en' | 'zh'): 
       ? 'Generate the title and subtitle in Simplified Chinese (zh-CN).'
       : 'Generate the title and subtitle in English.';
 
-    const userPrompt = `Generate a creative design concept for a "Diffuse Gradient" graphic poster based on this mood/theme: "${mood}". ` +
-      `${langInstruction} Return a JSON object with the following shape: {\n  \"title\": string (catchy, max 4 words),\n  \"subtitle\": string (poetic/descriptive, max 10 words),\n  \"colors\": [[...]
+     const userPrompt = `Generate a creative design concept for a "Diffuse Gradient" graphic poster based on this mood/theme: "${mood}". ` +
+      `${langInstruction} Return a JSON object with the following shape: {\n  \"title\": string (catchy, max 4 words),\n  \"subtitle\": string (poetic/descriptive, max 10 words),\n  \"colors\": [\"#RRGGBB\", ...] (exactly 5 hex color codes)\n}. Respond with ONLY the JSON object.`;
 
     const body = {
       model,
