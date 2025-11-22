@@ -126,11 +126,13 @@ const App: React.FC = () => {
                     <p className="text-lg font-medium leading-relaxed opacity-90 whitespace-pre-wrap tracking-wide">
                         {config.subtitle}
                     </p>
-                    <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-widest opacity-60 font-sans">
-                        <span>{lang === 'zh' ? 'Flux 视觉生成' : 'Flux Generation'}</span>
-                        <span>•</span>
-                        <span>2024</span>
-                    </div>
+                    {!snapshotUrl && (
+                        <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-widest opacity-60 font-sans">
+                            <span>{lang === 'zh' ? 'Flux 视觉生成' : 'Flux Generation'}</span>
+                            <span>•</span>
+                            <span>2024</span>
+                        </div>
+                    )}
                 </div>
             </div>
             
