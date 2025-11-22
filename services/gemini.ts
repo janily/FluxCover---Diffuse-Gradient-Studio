@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { GeneratedContent } from "../types";
 
 // Use GRS AI endpoint (compatible with OpenAI chat/completions)
@@ -16,7 +15,7 @@ export const generateCreativeContent = async (mood: string, lang: 'en' | 'zh'): 
       ? 'Generate the title and subtitle in Simplified Chinese (zh-CN).'
       : 'Generate the title and subtitle in English.';
 
-    const userPrompt = `Generate a creative design concept for a "Diffuse Gradient" graphic poster based on this mood/theme: "${mood}". ` +
+     const userPrompt = `Generate a creative design concept for a "Diffuse Gradient" graphic poster based on this mood/theme: "${mood}". ` +
       `${langInstruction} Return a JSON object with the following shape: {\n  \"title\": string (catchy, max 4 words),\n  \"subtitle\": string (poetic/descriptive, max 10 words),\n  \"colors\": [\"#RRGGBB\", ...] (exactly 5 hex color codes)\n}. Respond with ONLY the JSON object.`;
 
     const body = {
@@ -29,7 +28,7 @@ export const generateCreativeContent = async (mood: string, lang: 'en' | 'zh'): 
       stream: false
     } as any;
 
-    const res = await fetch(`${API_BASE}/v1/chat/completions`, {
+    const res = await (globalThis as any).fetch(`${API_BASE}/v1/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
