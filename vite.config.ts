@@ -8,6 +8,11 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: '0.0.0.0',
     },
+    preview: {
+      port: 8080,
+      host: '0.0.0.0',
+      allowedHosts: ['*.zeabur.app', 'localhost']
+    },
     plugins: [react()],
     define: {
       'process.env.GRSAI_API_KEY': JSON.stringify(process.env.GRSAI_API_KEY),
