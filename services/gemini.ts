@@ -51,7 +51,7 @@ export const generateCreativeContent = async (mood: string, lang: 'en' | 'zh'): 
     try {
       parsed = JSON.parse(raw);
     } catch (err) {
-      const m = raw.match(/\{[\\s\\S]*\}/);
+      const m = raw.match(/\{[\s\S]*\}/);
       if (m) {
         parsed = JSON.parse(m[0]);
       } else {
